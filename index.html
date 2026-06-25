@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>I'm a Responsible Digital Leader - DLSZ Blended Learning Edition</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for cute icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Comfortaa & Fredoka for friendly, anime-style rounded UI -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tone.js for high-quality synthetic background music and retro game sounds -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Fredoka', 'Comfortaa', sans-serif;
+            background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 50%, #f0fdf4 100%);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+        /* Custom scrollbar for handbook and panels */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f0fdf4;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #bbf7d0;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #86efac;
+        }
+        /* Soft pulsing & bouncing animations for anime/cute elements */
+        .bounce-gentle {
+            animation: gentleBounce 3s infinite ease-in-out;
+        }
+        @keyframes gentleBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        .pulse-gentle {
+            animation: gentlePulse 2s infinite ease-in-out;
+        }
+        @keyframes gentlePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        /* 16:9 aspect ratio container styling with responsive constraints */
+        .game-viewport {
+            aspect-ratio: 16 / 9;
+            max-width: 1020px;
+            width: 100%;
+            margin: 0 auto;
+            position: relative;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            box-shadow: 0 20px 40px -15px rgba(5, 150, 105, 0.2);
+            max-height: 78vh; /* Limit viewport height to prevent clipping on short screens */
+        }
+        @media (max-height: 650px) {
+            .game-viewport {
+                max-height: 68vh;
+            }
+        }
+        
+        /* Print rules for Certificate of Completion */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #printableCertificateArea, #printableCertificateArea * {
+                visibility: visible;
+            }
+            #printableCertificateArea {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                background: white !important;
+                box-shadow: none !important;
+                border: none !important;
+            }
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-start md:justify-center p-2 md:p-4">
+
+<div class="w-full max-w-5xl flex flex-col items-center gap-1.5">
+    <!-- Top Header & Controls -->
+    <div class="w-full max-w-[1020px] flex justify-between items-center px-4 py-2 bg-white/95 backdrop-blur rounded-2xl shadow-sm border border-emerald-100 mb-1">
+        <div class="flex items-center gap-2">
+            <span class="text-xl md:text-2xl animate-bounce">💚</span>
+            <div>
+                <h1 class="text-xs md:text-sm font-extrabold bg-gradient-to-r from-emerald-600 via-teal-600 to-indigo-600 bg-clip-text text-transparent leading-tight">
+                    De La Salle Santiago Zobel School
+                </h1>
+                <p class="text-[9px] text-slate-500 font-bold tracking-wide">NxGBL Blended Learning: Students' MLD Pledge & iTHINK Challenge</p>
+            </div>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="flex items-center gap-2">
+            <button onclick="toggleMusic()" id="musicBtn" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-xl text-[10px] md:text-xs font-bold flex items-center gap-1.5 transition-all shadow-sm active:scale-95">
+                <i class="fas fa-music-slash text-slate-400" id="musicIcon"></i>
+                <span id="musicStatus">Music: Off</span>
+            </button>
+            <button onclick="openHandbook()" class="bg-amber-50 hover:bg-amber-100 text-amber-700 px-3 py-1.5 rounded-xl text-[10px] md:text-xs font-bold flex items-center gap-1.5 transition-all shadow-sm active:scale-95">
+                <i class="fas fa-book-open"></i>
+                <span>Study Guides</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- MAIN 16:9 GAME CONTAINER -->
+    <div class="game-viewport border-4 border-emerald-200 rounded-3xl overflow-hidden flex flex-col relative select-none">
+        
+        <!-- HUD Overlay (Drawn on top of stages, adapts to fit without overlapping dialogue) -->
+        <div id="gameHud" class="absolute top-2 left-3 right-3 z-10 flex justify-between items-center pointer-events-none transition-all duration-300 transform -translate-y-20 opacity-0">
+            <!-- Score, current Level, and Student name indicators -->
+            <div class="flex gap-2 pointer-events-auto">
+                <div class="bg-white/95 backdrop-blur-sm px-3 py-1 rounded-xl shadow border border-emerald-100 flex items-center gap-1.5">
+                    <span class="text-xs">🏆</span>
+                    <div>
+                        <div class="text-[7px] text-slate-400 font-bold uppercase tracking-wider leading-none">Score</div>
+                        <div id="hudScore" class="text-[10px] md:text-xs font-bold text-emerald-600 leading-tight">0000</div>
+                    </div>
+                </div>
+                <div class="bg-white/95 backdrop-blur-sm px-3 py-1 rounded-xl shadow border border-indigo-100 flex items-center gap-1.5">
+                    <span class="text-xs">⭐️</span>
+                    <div>
+                        <div class="text-[7px] text-slate-400 font-bold uppercase tracking-wider leading-none">Progress</div>
+                        <div id="hudLevelName" class="text-[10px] md:text-xs font-bold text-indigo-600 leading-tight">Item 1/20</div>
+                    </div>
+                </div>
+                <div class="bg-white/95 backdrop-blur-sm px-3 py-1 rounded-xl shadow border border-slate-100 flex items-center gap-1.5">
+                    <span class="text-xs">👤</span>
+                    <div>
+                        <div class="text-[7px] text-slate-400 font-bold uppercase tracking-wider leading-none">Leader</div>
+                        <div id="hudStudentName" class="text-[10px] md:text-xs font-bold text-slate-700 leading-tight truncate max-w-[80px]">Student</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Heart/Stars Lives -->
+            <div class="bg-white/95 backdrop-blur-sm px-3 py-1 rounded-xl shadow border border-rose-100 flex items-center gap-2 pointer-events-auto">
+                <div class="text-[7px] text-slate-400 font-bold uppercase tracking-wider">Tries Left:</div>
+                <div class="flex gap-0.5 text-xs text-amber-400 animate-pulse" id="hudStars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCREEN 0: STUDENT NAME SIGN-IN SCREEN -->
+        <div id="nameScreen" class="absolute inset-0 flex flex-col justify-between p-4 md:p-6 z-20 bg-gradient-to-tr from-emerald-50 via-teal-50 to-indigo-50 overflow-y-auto">
+            <div class="text-center mt-3">
+                <span class="bg-emerald-600 text-white text-[9px] px-2.5 py-0.5 rounded-full font-bold uppercase tracking-widest shadow-sm">Grade 3-6 Interactive Quest</span>
+                <h1 class="text-xl md:text-2xl lg:text-3xl font-extrabold text-slate-800 mt-1.5">
+                    I'm a Responsible <br/>
+                    <span class="bg-gradient-to-r from-emerald-600 to-indigo-600 bg-clip-text text-transparent">Digital Leader! ✨</span>
+                </h1>
+                <p class="text-[10px] md:text-xs text-slate-500 mt-1 max-w-lg mx-auto">
+                    Welcome to the Next Generation Blended Learning Academy! Before we join <strong class="text-emerald-700">Zee the Robot</strong> on this 20-item mission, please tell us your name for your official Certificate!
+                </p>
+            </div>
+
+            <!-- Input area -->
+            <div class="max-w-xs w-full mx-auto bg-white p-4 rounded-2xl border-2 border-emerald-100 shadow-md flex flex-col gap-3 my-2">
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Enter Student's Full Name:</label>
+                    <input type="text" id="studentNameInput" placeholder="e.g. Winnie Y. Diola" class="w-full mt-1 px-3 py-2 text-xs md:text-sm font-semibold border-2 border-emerald-100 rounded-xl focus:outline-none focus:border-emerald-500 transition-all text-center">
+                </div>
+                <button id="registerNameBtn" class="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs py-2.5 rounded-xl transition-all shadow-md active:scale-95 flex items-center justify-center gap-2">
+                    <span>Next: Choose Character</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <!-- School Seals -->
+            <div class="flex justify-center items-center gap-4 opacity-50 mb-1">
+                <span class="text-[9px] font-bold text-slate-600 uppercase tracking-widest">DLSZ NxGBL Program</span>
+            </div>
+        </div>
+
+        <!-- SCREEN 1: INTRO/CHARACTER CHOOSER -->
+        <div id="introScreen" class="hidden absolute inset-0 flex flex-col justify-between p-4 md:p-6 z-20 bg-gradient-to-tr from-emerald-50 via-teal-50 to-indigo-50 transition-opacity duration-500 overflow-y-auto">
+            <div class="text-center mt-1">
+                <span class="bg-emerald-600 text-white text-[9px] px-2.5 py-0.5 rounded-full font-bold uppercase tracking-widest shadow-sm">DLSZ Special Blended Learning Edition</span>
+                <h1 class="text-lg md:text-2xl font-black text-slate-800 mt-1 tracking-tight">
+                    Select Your Digital Companion! ✨
+                </h1>
+                <p class="text-[9px] md:text-[11px] text-slate-600 mt-0.5 max-w-lg mx-auto">
+                    Adventure with <strong class="text-emerald-700 font-bold">Zee the Robot</strong> & classmates to unlock the 20-rule matrix!
+                </p>
+            </div>
+
+            <!-- Cute Cartoon Characters -->
+            <div class="flex justify-center items-end gap-4 my-2 overflow-hidden flex-1 max-h-[130px] md:max-h-[160px]">
+                <!-- Sakura Character -->
+                <button onclick="selectPlayerCharacter('Sakura')" class="group flex flex-col items-center bounce-gentle focus:outline-none" style="animation-delay: 0.2s;">
+                    <div class="relative group-hover:scale-105 transition-transform">
+                        <svg class="w-12 h-12 md:w-16 md:h-16 drop-shadow" viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="45" fill="#ffd1dc"/>
+                            <path d="M50,15 C20,15 20,60 20,60 C20,60 30,50 50,50 C70,50 80,60 80,60 C80,60 80,15 50,15 Z" fill="#ff9aa2"/>
+                            <circle cx="50" cy="52" r="28" fill="#ffe5d9"/>
+                            <ellipse cx="40" cy="50" rx="3" ry="5" fill="#4a3728"/>
+                            <ellipse cx="60" cy="50" rx="3" ry="5" fill="#4a3728"/>
+                            <circle cx="35" cy="55" r="3.5" fill="#ffb7b2" opacity="0.8"/>
+                            <circle cx="65" cy="55" r="3.5" fill="#ffb7b2" opacity="0.8"/>
+                            <path d="M 47 58 Q 50 61 53 58" stroke="#4a3728" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                        </svg>
+                        <div id="selSakura" class="absolute -top-1 -right-1 bg-emerald-500 text-white text-[8px] w-4 h-4 rounded-full flex items-center justify-center opacity-0"><i class="fas fa-check"></i></div>
+                    </div>
+                    <span class="bg-white/95 group-hover:bg-pink-100 px-2 py-0.5 rounded-lg text-[8px] font-bold shadow border border-pink-100 text-pink-500 mt-1">Sakura</span>
+                </button>
+
+                <!-- Zee the Robot (Mascot) -->
+                <div class="flex flex-col items-center transform scale-110 drop-shadow-md z-10 pulse-gentle">
+                    <svg class="w-14 h-14 md:w-18 md:h-18" viewBox="0 0 100 100">
+                        <!-- Head -->
+                        <rect x="30" y="22" width="40" height="28" rx="14" fill="#15803d" stroke="#14532d" stroke-width="2"/>
+                        <rect x="25" y="14" width="6" height="15" rx="3" fill="#4ade80"/>
+                        <rect x="69" y="14" width="6" height="15" rx="3" fill="#4ade80"/>
+                        <!-- Robot Eyes -->
+                        <ellipse cx="40" cy="35" rx="4" ry="4" fill="#ffffff"/>
+                        <ellipse cx="60" cy="35" rx="4" ry="4" fill="#ffffff"/>
+                        <circle cx="40" cy="35" r="1.5" fill="#000"/>
+                        <circle cx="60" cy="35" r="1.5" fill="#000"/>
+                        <!-- Antenna Hat -->
+                        <path d="M42,22 L58,22 L50,8 Z" fill="#14532d"/>
+                        <!-- Body with yellow 'Z' -->
+                        <path d="M30,52 L70,52 L60,80 L40,80 Z" fill="#15803d" stroke="#14532d" stroke-width="2"/>
+                        <text x="50" y="70" font-family="'Fredoka', sans-serif" font-weight="bold" font-size="18" fill="#facc15" text-anchor="middle">Z</text>
+                        <!-- Left arm holding safe device -->
+                        <path d="M22,60 L32,56" stroke="#757575" stroke-width="3"/>
+                        <rect x="12" y="50" width="11" height="16" rx="2" fill="#ffffff" stroke="#37474f" stroke-width="1.5"/>
+                        <circle cx="17.5" cy="58" r="2" fill="#4ade80"/>
+                    </svg>
+                    <span class="bg-emerald-700 text-white px-2 py-0.5 rounded-full text-[8px] font-bold shadow-md -mt-1.5">Zee (AI Companion)</span>
+                </div>
+
+                <!-- Kenji Character -->
+                <button onclick="selectPlayerCharacter('Kenji')" class="group flex flex-col items-center bounce-gentle focus:outline-none" style="animation-delay: 0.4s;">
+                    <div class="relative group-hover:scale-105 transition-transform">
+                        <svg class="w-12 h-12 md:w-16 md:h-16 drop-shadow" viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="45" fill="#c7ceea"/>
+                            <path d="M50,15 C30,15 22,40 22,40 C35,35 45,42 50,30 C55,42 65,35 78,40 C78,40 70,15 50,15 Z" fill="#2e4057"/>
+                            <circle cx="50" cy="55" r="26" fill="#ffd8be"/>
+                            <ellipse cx="42" cy="52" rx="3" ry="5" fill="#293241"/>
+                            <ellipse cx="58" cy="52" rx="3" ry="5" fill="#293241"/>
+                            <path d="M 46 62 Q 50 66 54 62" stroke="#293241" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                        </svg>
+                        <div id="selKenji" class="absolute -top-1 -right-1 bg-emerald-500 text-white text-[8px] w-4 h-4 rounded-full flex items-center justify-center opacity-0"><i class="fas fa-check"></i></div>
+                    </div>
+                    <span class="bg-white/95 group-hover:bg-indigo-100 px-2 py-0.5 rounded-lg text-[8px] font-bold shadow border border-indigo-100 text-indigo-500 mt-1">Kenji</span>
+                </button>
+            </div>
+
+            <!-- Start Action Area -->
+            <div class="flex flex-col items-center justify-center gap-1 mb-2">
+                <button id="startGameBtn" onclick="startGame()" class="bg-gradient-to-r from-emerald-500 via-teal-600 to-indigo-600 hover:from-emerald-600 hover:to-indigo-700 text-white font-extrabold text-xs md:text-sm px-8 py-3 rounded-2xl shadow-md hover:shadow-lg transition-all transform hover:scale-[1.03] active:scale-95 flex items-center gap-2">
+                    <span>START 20-LEVEL QUEST</span>
+                    <i class="fas fa-rocket animate-bounce"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- SCREEN 2: ACTIVE GAME PLAY AREA -->
+        <div id="gamePlayArea" class="hidden absolute inset-0 flex flex-col justify-between p-3 bg-gradient-to-b from-[#f3fbf7] to-[#e6f4ea] min-h-0 overflow-hidden">
+            
+            <!-- Main levels layout wrapper with overflow limits -->
+            <div id="levelContentContainer" class="flex-1 flex flex-col md:flex-row items-stretch justify-between gap-3 mt-10 mb-1 min-h-0 overflow-hidden">
+                
+                <!-- Left Narrative Column -->
+                <div class="w-full md:w-5/12 bg-white/95 backdrop-blur-sm rounded-2xl p-3 border border-emerald-100 shadow-sm flex flex-col justify-between min-h-0 overflow-y-auto">
+                    <!-- Dialogue area -->
+                    <div class="flex items-start gap-2.5">
+                        <div id="characterAvatar" class="w-12 h-12 md:w-14 md:h-14 shrink-0 bg-emerald-50 rounded-xl border border-emerald-100 p-0.5 flex items-center justify-center">
+                            <!-- Populated in JS -->
+                        </div>
+                        <div class="flex-1">
+                            <span id="characterName" class="text-[8px] font-extrabold text-emerald-600 uppercase tracking-widest bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-100">Zee the Robot</span>
+                            <div class="mt-1 text-[11px] md:text-xs text-slate-700 font-medium leading-relaxed" id="dialogueText">
+                                <!-- Narrations go here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Compact guidance hint matching MLD Pledge & iTHINK -->
+                    <div class="mt-2 bg-amber-50/90 border border-amber-200/60 rounded-xl p-2 flex items-center gap-1.5">
+                        <span class="text-xs">💡</span>
+                        <p class="text-[9px] font-medium text-amber-800 leading-tight">
+                            <strong>Mission Tip:</strong> Shuffled answers test your focus. Review the <strong>Study Guides</strong> if you need help with the rubrics!
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Right Interaction Column (Guarantees scrolling layout for answers) -->
+                <div class="w-full md:w-7/12 bg-white/95 rounded-2xl border border-emerald-100 shadow-sm p-3 flex flex-col justify-between items-center relative min-h-0 overflow-y-auto">
+                    <!-- Progress Tracker indicators (20 dots) -->
+                    <div id="stepTracker" class="flex flex-wrap gap-1 justify-center items-center w-full pb-2 mb-2 border-b border-slate-100 shrink-0">
+                        <!-- Dot tags will dynamically populate representing 20 levels -->
+                    </div>
+
+                    <div id="challengeInteractionArea" class="w-full flex-1 flex flex-col justify-start items-center min-h-0">
+                        <!-- Dynamic options render here, fully scrolling safe -->
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- FEEDBACK NOTIFICATION BOX -->
+        <div id="feedbackOverlay" class="hidden absolute inset-0 z-30 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs">
+            <div id="feedbackCard" class="w-[85%] max-w-sm bg-white rounded-2xl p-4 md:p-5 border-4 shadow-xl flex flex-col items-center text-center transform scale-95 transition-all duration-300">
+                <div id="feedbackMascot" class="w-12 h-12 mb-1.5 flex items-center justify-center rounded-xl">
+                    <!-- Populated in JS -->
+                </div>
+                <h3 id="feedbackTitle" class="text-xs md:text-sm font-black mb-1">Perfect Answer!</h3>
+                <div id="feedbackRuleBadge" class="bg-emerald-50 text-emerald-700 text-[8px] px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider mb-2 border border-emerald-100">
+                    Rule Met
+                </div>
+                <p id="feedbackText" class="text-[9px] md:text-xs text-slate-600 max-w-xs mb-3 leading-relaxed">
+                    You chose the proper responsible citizenship action! Let's continue.
+                </p>
+                <button id="feedbackActionBtn" onclick="dismissFeedback()" class="w-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-[11px] md:text-xs font-extrabold py-2.5 rounded-xl shadow transition-all transform hover:scale-[1.01] active:scale-95">
+                    Next Mission
+                </button>
+            </div>
+        </div>
+
+        <!-- SCREEN 3: GAME OVER / CERTIFICATION DISPLAY -->
+        <div id="gameOverScreen" class="hidden absolute inset-0 flex flex-col justify-between p-4 md:p-6 z-20 bg-gradient-to-b from-emerald-50/50 via-[#ecf7db]/50 to-indigo-50/50 overflow-y-auto">
+            <div class="text-center mt-1">
+                <span class="bg-emerald-100 text-emerald-800 text-[9px] px-2.5 py-0.5 rounded-full font-bold uppercase tracking-widest">Graduation Day!</span>
+                <h2 class="text-lg md:text-2xl font-extrabold text-slate-800 mt-0.5">Zee's Graduation Ceremony 🎓</h2>
+                <p class="text-[9px] text-slate-500">You have completed all 20 NxGBL Scenario-Based Challenges successfully!</p>
+            </div>
+
+            <!-- Printable Certificate Container Preview -->
+            <div id="printableCertificateArea" class="bg-white p-3.5 md:p-4 rounded-2xl border-4 border-emerald-600 shadow-md max-w-2xl mx-auto w-full text-center relative overflow-hidden flex flex-col justify-between">
+                <!-- Certificate details -->
+                <div class="border-2 border-amber-400 p-2 md:p-3 rounded-xl bg-slate-50 flex flex-col justify-between h-full relative">
+                    <!-- Background Watermark Zee -->
+                    <div class="absolute inset-0 opacity-[0.03] flex items-center justify-center pointer-events-none">
+                        <i class="fas fa-robot text-[120px]"></i>
+                    </div>
+
+                    <div>
+                        <h4 class="text-[10px] uppercase font-black tracking-widest text-emerald-700">Certificate of Completion</h4>
+                        <p class="text-[8px] text-slate-400 font-bold uppercase">awarded to</p>
+                        <h2 id="certStudentName" class="text-base md:text-xl font-extrabold text-slate-800 italic underline decoration-emerald-500 mt-1">Winnie Y. Diola</h2>
+                        <p class="text-[8px] max-w-md mx-auto text-slate-500 mt-1 leading-relaxed">
+                            For proving exemplary digital excellence, honesty, and responsible stewardship by completing 20 scenario-based checkpoints of the official <strong>DLSZ Students' MLD Pledge</strong> and the <strong>iTHINK Digital Citizenship Framework</strong>.
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-end mt-2">
+                        <!-- Score badge -->
+                        <div class="text-left">
+                            <span class="text-[7px] text-slate-400 uppercase font-black block">Final Score</span>
+                            <span id="certFinalScore" class="text-xs font-black text-emerald-600">3000 / 3000</span>
+                        </div>
+                        
+                        <!-- Coordinator Signature -->
+                        <div class="flex flex-col items-center px-2 border-t border-slate-200 pt-1">
+                            <div class="text-[9px] font-extrabold text-slate-800 italic font-serif leading-tight">Winnie Y. Diola</div>
+                            <span class="text-[6px] font-bold text-slate-500 uppercase tracking-wider text-center">Ms. Winnie Y. Diola</span>
+                            <span class="text-[5px] text-slate-400 text-center leading-none">Education Technology Coordinator</span>
+                        </div>
+
+                        <!-- AI Companion stamp -->
+                        <div class="flex flex-col items-center">
+                            <div class="w-7 h-7 rounded-full bg-emerald-100 border border-emerald-300 flex items-center justify-center text-[10px] text-emerald-700 animate-pulse">
+                                🤖
+                            </div>
+                            <span class="text-[5px] font-bold text-slate-500 mt-0.5">Zee (AI Guide)</span>
+                        </div>
+                        
+                        <!-- Seal -->
+                        <div class="text-right">
+                            <span class="text-[7px] text-slate-400 uppercase font-black block">Date Completed</span>
+                            <span class="text-[8px] font-bold text-slate-700" id="certCompletionDate">June 24, 2026</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="flex justify-center gap-2 mb-1 shrink-0">
+                <button onclick="window.print()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-[10px] px-5 py-2 rounded-xl shadow transition-all active:scale-95 flex items-center gap-1.5">
+                    <i class="fas fa-print"></i>
+                    <span>Print Official Certificate</span>
+                </button>
+                <button onclick="restartQuest()" class="bg-slate-200 hover:bg-slate-300 text-slate-800 font-extrabold text-[10px] px-5 py-2 rounded-xl shadow transition-all active:scale-95 flex items-center gap-1.5">
+                    <i class="fas fa-undo"></i>
+                    <span>Restart Quest</span>
+                </button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- FULL-SCREEN STUDY GUIDES HANDBOOK -->
+<div id="handbookModal" class="hidden fixed inset-0 z-50 bg-slate-900/65 backdrop-blur-md flex items-center justify-center p-3">
+    <div class="w-full max-w-xl bg-white rounded-2xl border-4 border-emerald-300 shadow-2xl flex flex-col max-h-[85vh] overflow-hidden">
+        
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-emerald-50 to-green-50 p-3 border-b-2 border-emerald-200 flex justify-between items-center shrink-0">
+            <div class="flex items-center gap-2">
+                <span class="text-xl">📖</span>
+                <div>
+                    <h2 class="text-xs md:text-sm font-extrabold text-emerald-950">Study Guides & Frameworks</h2>
+                    <p class="text-[8px] text-emerald-800 font-semibold uppercase tracking-wider">Refer to classroom official rubrics</p>
+                </div>
+            </div>
+            <button onclick="closeHandbook()" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-950 w-7 h-7 rounded-full flex items-center justify-center transition-all active:scale-90">
+                <i class="fas fa-times text-xs"></i>
+            </button>
+        </div>
+
+        <!-- Tabs & Contents Container -->
+        <div class="flex-1 overflow-y-auto p-3 space-y-3">
+            
+            <!-- Tab switches -->
+            <div class="flex gap-2 justify-center pb-2 border-b shrink-0">
+                <button id="tabPledgeBtn" onclick="switchTab('pledge')" class="bg-emerald-100 text-emerald-700 border border-emerald-300 px-3 py-1 rounded-xl font-bold text-[9px] md:text-xs">
+                    📜 Students' MLD Pledge
+                </button>
+                <button id="tabIthinkBtn" onclick="switchTab('ithink')" class="bg-slate-100 text-slate-600 border border-transparent px-3 py-1 rounded-xl font-bold text-[9px] md:text-xs">
+                    🤖 iTHINK Framework
+                </button>
+            </div>
+
+            <!-- TAB 1: MLD PLEDGE -->
+            <div id="tabPledge" class="space-y-2">
+                <div class="bg-emerald-50 border border-emerald-100 p-2 rounded-xl text-center">
+                    <p class="text-[9px] font-bold text-emerald-800">
+                        Refer to official classroom rules chart: <strong class="underline">image_cdf43c.jpg</strong>
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[9px] md:text-[10px]">
+                    <div class="bg-white p-2 rounded-xl border border-emerald-100 shadow-xs flex items-center gap-1.5">
+                        <span class="text-sm font-black text-emerald-400">1</span>
+                        <div>
+                            <h4 class="font-bold text-emerald-700">Check Canvas</h4>
+                            <p class="text-slate-500 text-[8px] leading-tight">Log in daily for assignments and messages.</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-2 rounded-xl border border-emerald-100 shadow-xs flex items-center gap-1.5">
+                        <span class="text-sm font-black text-emerald-400">2</span>
+                        <div>
+                            <h4 class="font-bold text-emerald-700">Teacher Says Go!</h4>
+                            <p class="text-slate-500 text-[8px] leading-tight">Wait for the signal before opening screens.</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-2 rounded-xl border border-emerald-100 shadow-xs flex items-center gap-1.5">
+                        <span class="text-sm font-black text-emerald-400">3</span>
+                        <div>
+                            <h4 class="font-bold text-emerald-700">Fully Charged</h4>
+                            <p class="text-slate-500 text-[8px] leading-tight">Charge overnight. School charging max 1hr with log.</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-2 rounded-xl border border-emerald-100 shadow-xs flex items-center gap-1.5">
+                        <span class="text-sm font-black text-emerald-400">4</span>
+                        <div>
+                            <h4 class="font-bold text-emerald-700">Approved Apps</h4>
+                            <p class="text-slate-500 text-[8px] leading-tight">No personal social networking/gaming platforms during school.</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-2 rounded-xl border border-emerald-100 shadow-xs flex items-center gap-1.5">
+                        <span class="text-sm font-black text-emerald-400">5</span>
+                        <div>
+                            <h4 class="font-bold text-emerald-700">Learning First</h4>
+                            <p class="text-slate-500 text-[8px] leading-tight">No unrelated chats, hotspot, or VPN use in class.</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-2 rounded-xl border border-emerald-100 shadow-xs flex items-center gap-1.5">
+                        <span class="text-sm font-black text-emerald-400">6</span>
+                        <div>
+                            <h4 class="font-bold text-emerald-700">Handle with Care</h4>
+                            <p class="text-slate-500 text-[8px] leading-tight">Hold with two hands; clean screens; never slam closed.</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-2 rounded-xl border border-emerald-100 shadow-xs flex items-center gap-1.5">
+                        <span class="text-sm font-black text-emerald-400">7</span>
+                        <div>
+                            <h4 class="font-bold text-emerald-700">Keep it Safe</h4>
+                            <p class="text-slate-500 text-[8px] leading-tight">Never leave unattended. Use screensaver with name, grade, section.</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-2 rounded-xl border border-emerald-100 shadow-xs flex items-center gap-1.5">
+                        <span class="text-sm font-black text-emerald-400">8</span>
+                        <div>
+                            <h4 class="font-bold text-emerald-700">Be Kind Online</h4>
+                            <p class="text-slate-500 text-[8px] leading-tight">Respect others, ask permission before taking/posting photos.</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-2 rounded-xl border border-emerald-100 shadow-xs flex items-center gap-1.5">
+                        <span class="text-sm font-black text-emerald-400">9</span>
+                        <div>
+                            <h4 class="font-bold text-emerald-700">Keep School Apps</h4>
+                            <p class="text-slate-500 text-[8px] leading-tight">Do not delete educational apps or tools.</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-2 rounded-xl border border-emerald-100 shadow-xs flex items-center gap-1.5">
+                        <span class="text-sm font-black text-emerald-400">10</span>
+                        <div>
+                            <h4 class="font-bold text-emerald-700">Keep My Files</h4>
+                            <p class="text-slate-500 text-[8px] leading-tight">Organize files carefully in OneDrive/Google Drive.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: iTHINK -->
+            <div id="tabIthink" class="hidden space-y-2">
+                <div class="bg-emerald-50 border border-emerald-100 p-2 rounded-xl text-center">
+                    <p class="text-[9px] font-bold text-emerald-800">
+                        Refer to official Zee framework matrix: <strong class="underline">image_cdf3c3.jpg</strong>
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[9px] md:text-[10px]">
+                    <div class="bg-white p-2 rounded-xl border border-emerald-100 shadow-xs flex gap-1.5">
+                        <div class="w-7 h-7 rounded bg-emerald-100 flex items-center justify-center font-bold text-emerald-700 shrink-0">I</div>
+                        <div>
+                            <h4 class="font-bold text-emerald-800">Integrity</h4>
+                            <p class="text-slate-500 text-[8px] leading-tight">Act honestly and choose what is right even when unobserved.</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-2 rounded-xl border border-emerald-100 shadow-xs flex gap-1.5">
+                        <div class="w-7 h-7 rounded bg-emerald-100 flex items-center justify-center font-bold text-emerald-700 shrink-0">T</div>
+                        <div>
+                            <h4 class="font-bold text-emerald-800">Trustworthiness</h4>
+                            <p class="text-slate-500 text-[8px] leading-tight">Respect classroom rules, protect academic authenticity.</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-2 rounded-xl border border-emerald-100 shadow-xs flex gap-1.5">
+                        <div class="w-7 h-7 rounded bg-emerald-100 flex items-center justify-center font-bold text-emerald-700 shrink-0">H</div>
+                        <div>
+                            <h4 class="font-bold text-emerald-800">Humility</h4>
+                            <p class="text-slate-500 text-[8px] leading-tight">Acknowledge educational mistakes, respect classmates' critiques.</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-2 rounded-xl border border-emerald-100 shadow-xs flex gap-1.5">
+                        <div class="w-7 h-7 rounded bg-emerald-100 flex items-center justify-center font-bold text-emerald-700 shrink-0">I</div>
+                        <div>
+                            <h4 class="font-bold text-emerald-800">Inclusiveness</h4>
+                            <p class="text-slate-500 text-[8px] leading-tight">Reject discrimination or exclusionary bullying habits.</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-2 rounded-xl border border-emerald-100 shadow-xs flex gap-1.5">
+                        <div class="w-7 h-7 rounded bg-emerald-100 flex items-center justify-center font-bold text-emerald-700 shrink-0">N</div>
+                        <div>
+                            <h4 class="font-bold text-emerald-800">Nobility</h4>
+                            <p class="text-slate-500 text-[8px] leading-tight">Apply online connectivity to promote positive change.</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-2 rounded-xl border border-emerald-100 shadow-xs flex gap-1.5">
+                        <div class="w-7 h-7 rounded bg-emerald-100 flex items-center justify-center font-bold text-emerald-700 shrink-0">K</div>
+                        <div>
+                            <h4 class="font-bold text-emerald-800">Kindness</h4>
+                            <p class="text-slate-500 text-[8px] leading-tight">Nurture respectful digital communication pathways.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="bg-slate-50 p-2 border-t flex justify-end shrink-0">
+            <button onclick="closeHandbook()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-[10px] px-4 py-1.5 rounded-xl">
+                I Understand!
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let score = 0;
+    let currentScenarioIndex = 0;
+    let stars = 3;
+    let playerCharacter = 'Sakura';
+    let studentName = 'Winnie Y. Diola';
+    let musicPlaying = false;
+    let synthsInitialized = false;
+
+    // Upgraded lively synth loops
+    let bassSynth, leadSynth, polySynth, melodyLoop;
+
+    function initAudio() {
+        if (synthsInitialized) return;
+
+        // Upbeat, high-pitched triangle lead synth for 8-bit anime sound
+        leadSynth = new Tone.MonoSynth({
+            oscillator: { type: "square" },
+            envelope: { attack: 0.01, decay: 0.05, sustain: 0.4, release: 0.1 },
+            filter: { Q: 1, type: "lowpass", frequency: 1800 }
+        }).toDestination();
+        leadSynth.volume.value = -12;
+
+        // Bouncy pulse/saw bass synth
+        bassSynth = new Tone.Synth({
+            oscillator: { type: "triangle" },
+            envelope: { attack: 0.03, decay: 0.08, sustain: 0.3, release: 0.08 }
+        }).toDestination();
+        bassSynth.volume.value = -14;
+
+        // Poly synth for correct/incorrect visual feedback cues
+        polySynth = new Tone.PolySynth(Tone.Synth, {
+            oscillator: { type: "sine" },
+            envelope: { attack: 0.02, decay: 0.05, sustain: 0.5, release: 0.2 }
+        }).toDestination();
+        polySynth.volume.value = -8;
+
+        synthsInitialized = true;
+    }
+
+    function toggleMusic() {
+        initAudio();
+        Tone.start();
+
+        if (musicPlaying) {
+            Tone.Transport.stop();
+            document.getElementById('musicIcon').className = 'fas fa-music-slash text-slate-400';
+            document.getElementById('musicStatus').textContent = 'Music: Off';
+            musicPlaying = false;
+        } else {
+            // High energy lively J-Pop tempo (150 BPM)
+            Tone.Transport.bpm.value = 150;
+            playLivelyMelody();
+            Tone.Transport.start();
+            document.getElementById('musicIcon').className = 'fas fa-music text-emerald-500';
+            document.getElementById('musicStatus').textContent = 'Music: On';
+            musicPlaying = true;
+        }
+    }
+
+    function playLivelyMelody() {
+        const leadPattern = [
+            "E5", "G5", "C6", "G5", "A5", "G5", "C6", "D6",
+            "E6", "C6", "A5", "F5", "G5", "A5", "G5", "E5",
+            "D5", "F#5", "A5", "F#5", "G5", "F#5", "B5", "A5",
+            "C6", "B5", "A5", "G5", "F5", "E5", "D5", "G5"
+        ];
+
+        const bassPattern = [
+            "C3", "C3", "E3", "G3", "F3", "F3", "A3", "C4",
+            "G2", "G2", "B2", "D3", "A2", "A2", "C3", "E3",
+            "D3", "D3", "F#3", "A3", "G3", "G3", "B3", "D4",
+            "F3", "F3", "A3", "C4", "G3", "G3", "B3", "D4"
+        ];
+
+        let index = 0;
+        Tone.Transport.cancel();
+
+        melodyLoop = new Tone.Loop(time => {
+            let note = leadPattern[index % leadPattern.length];
+            let bassNote = bassPattern[index % bassPattern.length];
+            
+            let velocity = (index % 4 === 0) ? 0.9 : 0.6;
+            
+            leadSynth.triggerAttackRelease(note, "8n", time, velocity);
+            bassSynth.triggerAttackRelease(bassNote, "8n", time, 0.7);
+            
+            index++;
+        }, "8n").start(0);
+    }
+
+    function playSfx(type) {
+        if (!synthsInitialized) return;
+        const now = Tone.now();
+        if (type === 'correct') {
+            polySynth.triggerAttackRelease(["C5", "E5", "G5"], "16n", now);
+            polySynth.triggerAttackRelease(["E5", "G5", "C6"], "8n", now + 0.08);
+        } else if (type === 'incorrect') {
+            polySynth.triggerAttackRelease(["F#3", "A3"], "8n", now);
+            polySynth.triggerAttackRelease(["D3", "F3"], "4n", now + 0.1);
+        }
+    }
+
+    // 20 Scenarios with 3 options each (will be dynamically shuffled upon render)
+    const scenarios = [
+        // LEVEL 1: Pre-Class, Battery & Screensaver Setup (1-4)
+        {
+            levelNum: 1,
+            title: "Q1: Homeroom Morning Protocol",
+            dialogueName: "Zee",
+            dialogueText: "Welcome to class! Upon entering the room, what is the homeroom protocol for your Mobile Learning Device (MLD)?",
+            instructions: "Select the correct classroom startup behavior:",
+            options: [
+                { text: "🎒 Place your MLD safely under your table or chair and wait for the teacher's signal.", correct: true, rule: "DLSZ MLD Homeroom Guidelines", desc: "Fantastic! To avoid morning distractions, put your MLD out of sight until the subject teacher says go." },
+                { text: "📱 Place your MLD face-up on top of your desk immediately to check Canvas messages.", correct: false, desc: "Incorrect. Leaving the device open before subject teacher instruction causes homeroom distraction." },
+                { text: "🎮 Open a game quickly with a friend before the morning roll call starts.", correct: false, desc: "Incorrect. Personal gaming is prohibited during homeroom and class hours." }
+            ]
+        },
+        {
+            levelNum: 1,
+            title: "Q2: Screensaver Layout Rule",
+            dialogueName: "Sakura",
+            dialogueText: "Zee says our MLD needs a standardized screensaver so it can be identified if misplaced. What should it show?",
+            instructions: "Choose the approved screensaver contents:",
+            options: [
+                { text: "🖼️ A clearly readable poster showing your Full Name, Grade Level, and Section.", correct: true, rule: "DLSZ Screensaver Policies", desc: "Excellent! The screensaver is the first line of defense to safely return your MLD if you leave it somewhere." },
+                { text: "🎨 An anime character wallpaper with your initials hidden inside the corner.", correct: false, desc: "Not quite. Standard personal wallpapers make it highly difficult for coordinators to find the owner." },
+                { text: "🔒 A blank lock screen without any text information to secure your privacy.", correct: false, desc: "Incorrect. A completely empty lock screen violates standard school identification procedures." }
+            ]
+        },
+        {
+            levelNum: 1,
+            title: "Q3: Overnight Battery Preparation",
+            dialogueName: "Kenji",
+            dialogueText: "Tomorrow is a big quiz cycle! What is your pledge responsibility tonight concerning battery levels?",
+            instructions: "Pick the correct charging pledge rule:",
+            options: [
+                { text: "🔋 Ensure your MLD is fully-charged overnight at home before bringing it to school.", correct: true, rule: "MLD Pledge #3 (Fully Charged)", desc: "Brilliant! Bringing a fully charged device prevents classroom cord hazards and ensures you are ready for tests." },
+                { text: "🔌 Leave it at 20% overnight because you can plug it into a classroom socket anyway.", correct: false, desc: "No! Bringing extension cords is discouraged, and charging in class is limited to specific logs." },
+                { text: "🎒 Let your device run out completely, then borrow a friend's power bank during lunch.", correct: false, desc: "Incorrect. Relying on peers for power compromises learning readiness and swaps hardware accessories." }
+            ]
+        },
+        {
+            levelNum: 1,
+            title: "Q4: Emergency Classroom Charging",
+            dialogueName: "Zee",
+            dialogueText: "Oh no! Your battery drained to 15% during a project. How do you legally charge your MLD inside the classroom?",
+            instructions: "Select the school charging guidelines:",
+            options: [
+                { text: "📝 Ask teacher permission, sign the EdTech Unit log sheet, and charge for maximum 1 hour.", correct: true, rule: "DLSZ EdTech Charging Rules", desc: "Perfect! Following the 1-hour charging rule and signing the log sheet keeps device storage safe and organized." },
+                { text: "⚡ Quietly plug it into the back wall socket when the teacher is looking at the chalkboard.", correct: false, desc: "Incorrect. You must always seek explicit permission and sign the charging log sheet." },
+                { text: "🔌 Bring a heavy-duty extension cord to plug several devices into the same socket.", correct: false, desc: "Warning! Bringing personal extension cords to plug into classroom stations is strictly discouraged." }
+            ]
+        },
+        // LEVEL 2: Network, Wireless & App Policies (5-8)
+        {
+            levelNum: 2,
+            title: "Q5: Wireless Network Safety",
+            dialogueName: "Zee",
+            dialogueText: "The classroom Wi-Fi is loading files slowly. Your seatmate tells you to switch to a VPN or a cellular hotspot. What do you do?",
+            instructions: "Choose the correct networking standard:",
+            options: [
+                { text: "🌐 Stick to the school's wireless service; using hotspots is discouraged, and VPNs are a Category B offense.", correct: true, rule: "DLSZ Wireless Network Rules", desc: "Superb! VPN usage is a Category B offense as it bypasses critical school web filter safeguards." },
+                { text: "📶 Open a private cellular pocket Wi-Fi so your Google slides load in a split second.", correct: false, desc: "Incorrect. Pocket Wi-Fi and hotspots are highly discouraged as they bypass safety filters." },
+                { text: "🔒 Download a free VPN from the App Store to encrypt your gaming connection.", correct: false, desc: "Warning! Using virtual private networks (VPN) is a serious Category B handbook offense." }
+            ]
+        },
+        {
+            levelNum: 2,
+            title: "Q6: Deleting System Applications",
+            dialogueName: "Sakura",
+            dialogueText: "Yuki wants to clear some space on their tablet to record a video. They suggest deleting the Canvas app since they can use the browser.",
+            instructions: "Select the application management protocol:",
+            options: [
+                { text: "❌ Do not delete school-installed applications or LMS tools required by your teachers.", correct: true, rule: "MLD Pledge #9 (Keep School Apps)", desc: "Spot on! You must always preserve classroom apps and technical configurations on your profile." },
+                { text: "🗑️ Delete it for the day; you can easily reinstall it overnight when you get home.", correct: false, desc: "No. Deleting mandated apps violates standard learning profile rules." },
+                { text: "📂 Back up Canvas to an external flash drive and run it from there to save local space.", correct: false, desc: "Incorrect. Modifying core school software setups compromises direct student compliance." }
+            ]
+        },
+        {
+            levelNum: 2,
+            title: "Q7: Parent-Approved Games Storage",
+            dialogueName: "Kenji",
+            dialogueText: "Your parents allowed you to download some personal games for the weekend. How should they be organized on your school MLD?",
+            instructions: "Select the game folder organization rule:",
+            options: [
+                { text: "📂 Keep them in a separate folder, completely out of view from school-approved apps.", correct: true, rule: "DLSZ Game App Folder Guidelines", desc: "Excellent! Keeping personal files/games organized in a separate folder prevents distraction during class hours." },
+                { text: "🎮 Leave them pinned on your main dock so they are easy to launch during breaktimes.", correct: false, desc: "Incorrect. Pinning unapproved games to your main dock creates an active distraction in homeroom." },
+                { text: "🎨 Camouflage the game apps under fake icon designs like 'Calculator' or 'Dictionary'.", correct: false, desc: "Warning. Hiding unapproved applications under false designs shows a lack of academic integrity." }
+            ]
+        },
+        {
+            levelNum: 2,
+            title: "Q8: Airdrop and Bluetooth Policy",
+            dialogueName: "Zee",
+            dialogueText: "Kenji wants to Airdrop a cool anime drawing to Sakura during a group lecture. What is the wireless rule?",
+            instructions: "Pick the correct wireless transfer criteria:",
+            options: [
+                { text: "📡 Use Airdrop and Bluetooth strictly for school purposes like submitting tasks.", correct: true, rule: "MLD Bluetooth Regulations", desc: "Exactly! Keeping Bluetooth and Airdrop limited to educational transfers prevents classroom disruption." },
+                { text: "🚀 Send it quickly since Airdrop is instant and does not make any sound.", correct: false, desc: "Incorrect. Sending personal stickers or unapproved files violates Pledge #5 (Learning First)." },
+                { text: "🔒 Keep Airdrop set to 'Everyone' permanently so other classes can send you homework tips.", correct: false, desc: "Not recommended. Leaving discovery wide open is a safety risk and invites distractions." }
+            ]
+        },
+        // LEVEL 3: Physical Device Safety & Boundaries (9-12)
+        {
+            levelNum: 3,
+            title: "Q9: Handling Device Safely",
+            dialogueName: "Zee",
+            dialogueText: "Sakura is holding her tablet with one hand while searching for science specimens in the campus garden. What's the physical care rule?",
+            instructions: "Select the handling protection rule:",
+            options: [
+                { text: "👐 Always sit down when using the MLD, and hold the device with your two hands.", correct: true, rule: "MLD Pledge #6 (Handle with Care)", desc: "Brilliant! Holding the MLD properly, sitting down, and using two hands prevents costly drop damage." },
+                { text: "🤳 Keep walking while typing to complete your garden specimen notes in real-time.", correct: false, desc: "Oops! Leaning, typing, or running around while looking at the screen often causes device fractures." },
+                { text: "🎒 Carry it securely under your arm like a textbook while stepping on uneven terrain.", correct: false, desc: "Incorrect. Under-arm carries frequently lead to slips and accidental drops on school grounds." }
+            ]
+        },
+        {
+            levelNum: 3,
+            title: "Q10: Unattended Devices at Recess",
+            dialogueName: "Sakura",
+            dialogueText: "Recess is starting, and the canteen is packed. Yuki leaves their MLD sitting face-up on their desk so they don't have to carry it.",
+            instructions: "Choose the proper security standard:",
+            options: [
+                { text: "🔒 Leave devices inside locked lockers or under the table/chair; never leave them unattended.", correct: true, rule: "MLD Pledge #7 (Keep It Safe)", desc: "Perfect! Loss and damages frequently happen in crowded areas like the canteen or gym. Secure your MLD first." },
+                { text: "🎒 Bring the MLD with you to the canteen and set it on the crowded food table.", correct: false, desc: "Warning! Bringing devices to slippery, wet, and crowded food zones often causes physical liquid damage." },
+                { text: "📝 Ask your classmate who is staying behind to watch it for you while you eat.", correct: false, desc: "Incorrect. Leaving personal device custody in someone else's hands leads to liability conflicts." }
+            ]
+        },
+        {
+            levelNum: 3,
+            title: "Q11: Swapping or Borrowing Equipment",
+            dialogueName: "Kenji",
+            dialogueText: "My classmate's charger stopped working, and they want to swap devices and earphone accessories with me. Is this allowed?",
+            instructions: "Pick the accessory policy guideline:",
+            options: [
+                { text: "🚫 Swapping or borrowing MLDs, chargers, and earphones is highly discouraged.", correct: true, rule: "DLSZ Borrowing Boundaries", desc: "Superb! Switching hardware creates physical hygiene concerns and confusion over ownership." },
+                { text: "🔌 Swap them temporarily; peers must always share hardware to build Lasallian teamwork.", correct: false, desc: "Incorrect. Share learning support, but avoid swapping personal hardware, chargers, or files." },
+                { text: "📝 Swap accessories, but make sure to write it down on a piece of paper first.", correct: false, desc: "Incorrect. Written logs between students don't override the hardware custody rule." }
+            ]
+        },
+        {
+            levelNum: 3,
+            title: "Q12: Device Ringtone Alert Distractions",
+            dialogueName: "Zee",
+            dialogueText: "Your phone keeps ringing out loud in the middle of a class because of group chat notifications. What does the handbook say?",
+            instructions: "Select the ringtone regulation class:",
+            options: [
+                { text: "🔇 Mute it; continuous ringing (more than 4 times within the day) is a Category B offense.", correct: true, rule: "DLSZ Category B Minor Offenses", desc: "Exactly! Loud notifications are disruptive. Keep devices on silent at all times during lessons." },
+                { text: "📱 Answer it immediately to verify if there is an emergency in your class group chat.", correct: false, desc: "Warning! Taking personal messages during academic instruction is prohibited." },
+                { text: "🔔 Leave the sound on low so you can identify if your parent is trying to call you.", correct: false, desc: "Incorrect. DLSZ guidelines state continuous ringing of MLDs is a Category B offense." }
+            ]
+        },
+        // LEVEL 4: Blended Learning Academic Honesty (13-16)
+        {
+            levelNum: 4,
+            title: "Q13: Integrity Check - Canvas Quiz",
+            dialogueName: "Zee",
+            dialogueText: "During an online quiz, you accidentally find a web page containing all the solutions. What does true Integrity demand?",
+            instructions: "Select the choice expressing Integrity:",
+            options: [
+                { text: "💻 Close the extra answer tab immediately and solve the problems using what you know.", correct: true, rule: "iTHINK: Integrity", desc: "Inspiring! Integrity means choosing to act honestly and responsibly online even when no one is watching." },
+                { text: "📝 Quickly note down a couple of formulas before closing the window to verify your score.", correct: false, desc: "Warning. Copying answers or looking at cheats compromises your academic trustworthiness." },
+                { text: "🤫 Memorize the sheet layout and tell your friends about it after the quiz ends.", correct: false, desc: "Incorrect. Assisting others in obtaining answers violates DLSZ academic codes." }
+            ]
+        },
+        {
+            levelNum: 4,
+            title: "Q14: Humility - Classwork Corrections",
+            dialogueName: "Sakura",
+            dialogueText: "Your science project has been graded down due to typos. Your group partner gets angry at the teacher's score feedback.",
+            instructions: "Choose the Humility guideline option:",
+            options: [
+                { text: "🌟 Listen with an open mind, respect the feedback, and correct the mistakes on Canvas.", correct: true, rule: "iTHINK: Humility", desc: "Perfect! Humility is about admitting mistakes in online spaces and respecting academic advice." },
+                { text: "😠 Argue in the comments, saying 'I already know that!' and refuse to do corrections.", correct: false, desc: "Oops! Defensive comments or ignoring teacher corrections halts your academic development." },
+                { text: "🤫 Lock slide permissions so nobody in the group can edit your work further.", correct: false, desc: "Incorrect. Locking slide permissions out of frustration damages group collaboration." }
+            ]
+        },
+        {
+            levelNum: 4,
+            title: "Q15: Inclusiveness - Team Project Work",
+            dialogueName: "Kenji",
+            dialogueText: "You are working on joint slides. You notice one quiet teammate has not written anything on their designated slide. What do you do?",
+            instructions: "Choose the correct Inclusiveness response:",
+            options: [
+                { text: "🤝 Invite them to choose an easier part, encouraging them to add their ideas to the slides.", correct: true, rule: "iTHINK: Inclusiveness", desc: "Brilliant! Digital leaders welcome and value everyone, actively rejecting classmate exclusion." },
+                { text: "🗑️ Delete their slides from the slide deck so the team looks highly efficient.", correct: false, desc: "Warning! Excluding quiet classmates or deleting their slides is a form of digital bullying." },
+                { text: "🤐 Do their work for them secretly and remove their name from the contributors list.", correct: false, desc: "Incorrect. Doing work secretly without communicating prevents their academic growth." }
+            ]
+        },
+        {
+            levelNum: 4,
+            title: "Q16: Trustworthiness - Wrong File Submission",
+            dialogueName: "Zee",
+            dialogueText: "You accidentally submitted an empty template instead of your final portfolio. What is the honest action?",
+            instructions: "Pick the trustworthy choice:",
+            options: [
+                { text: "📨 Inform your subject teacher immediately, log the mistake, and submit the correct file.", correct: true, rule: "iTHINK: Trustworthiness", desc: "Outstanding! Telling the truth and presenting the correct work earns the confidence of others." },
+                { text: "📁 Claim that a Canvas server error corrupted your file and demand a full score anyway.", correct: false, desc: "Dishonesty breaks the trusting connection between you and your teachers." },
+                { text: "🤫 Wait until the teacher notices, then pretend you have no idea why it's missing.", correct: false, desc: "Not recommended. Passive avoidance shows a lack of academic accountability." }
+            ]
+        },
+        // LEVEL 5: Nobility, Kindness, Consent & Backups (17-20)
+        {
+            levelNum: 5,
+            title: "Q17: Nobility - Active Cyber Defense",
+            dialogueName: "Zee",
+            dialogueText: "Students in a private Discord thread are sending funny stickers mocking Kenji's presentation mistakes. What do you do?",
+            instructions: "Select the Digital Nobility standard:",
+            options: [
+                { text: "🛡️ Defend what is right: refuse to join the teasing, tell them to stop, and notify the teacher.", correct: true, rule: "iTHINK: Nobility", desc: "Magnificent! Nobility means using tech tools to promote goodness and stand up for justice." },
+                { text: "😆 Laugh along with the stickers because it was a funny slip-up and you don't want to look uncool.", correct: false, desc: "Incorrect. Supporting cyberbullying directly violates Lasallian community standards." },
+                { text: "🤐 Ignore the messages completely, thinking it's none of your business.", correct: false, desc: "Silent bystanders allow online exclusion to continue. True nobility takes a stance." }
+            ]
+        },
+        {
+            levelNum: 5,
+            title: "Q18: Consent - Recess Media Recording",
+            dialogueName: "Sakura",
+            dialogueText: "Kenji spilled orange juice on his desk and looks silly. You want to snap a photo to post to your close friends story.",
+            instructions: "Choose the proper media consent protocol:",
+            options: [
+                { text: "🔒 Always ask for permission and consent before taking or posting photos of others.", correct: true, rule: "MLD Pledge #8 (Be Kind Online)", desc: "Excellent! Recording classmates without consent to ridicule or malign them is a major handbook offense." },
+                { text: "📸 Take the photo quickly; it is just a harmless joke and you'll delete it after recess.", correct: false, desc: "Warning! Stealth recording of peers without consent is a serious Category B/C handbook violation." },
+                { text: "🤫 Post it but blur his eyes so only your classmates can recognize him.", correct: false, desc: "Incorrect. Blurring photos still compromises classmate privacy and digital citizenship." }
+            ]
+        },
+        {
+            levelNum: 5,
+            title: "Q19: Kindness - Peer Feedback",
+            dialogueName: "Kenji",
+            dialogueText: "Yuki shared her math essay, but it contains some calculation errors. How should you leave a peer review?",
+            instructions: "Select the Kindness choice:",
+            options: [
+                { text: "💚 Focus on her creative ideas first, then politely send private notes on how to correct calculations.", correct: true, rule: "iTHINK: Kindness", desc: "Spot on! Kindness means being helpful and encouraging, fostering classroom harmony and care." },
+                { text: "👎 Post a public comment calling her mistakes silly so she gets embarrassed and fixes them.", correct: false, desc: "Harsh criticisms damage peer confidence and break online kindness vows." },
+                { text: "🤫 Avoid leaving feedback so you don't have to think about someone else's errors.", correct: false, desc: "Incorrect. Peer evaluations require productive, helpful digital participation." }
+            ]
+        },
+        {
+            levelNum: 5,
+            title: "Q20: Storage Integrity - Cloud Backups",
+            dialogueName: "Zee",
+            dialogueText: "You finished your final blended learning portfolio slides. Where should these be stored safely to avoid accidental data loss?",
+            instructions: "Select the storage safety guideline:",
+            options: [
+                { text: "☁️ Save to your MLD local storage and secure backup folders on OneDrive, iCloud, or Google Drive.", correct: true, rule: "MLD Pledge #10 (Keep My Files)", desc: "Outstanding! You have mastered all 20 NxGBL Scenario-Based Challenges! Let's generate your Certificate!" },
+                { text: "🗑️ Keep files inside the temp downloads folder; it clears up space anyway.", correct: false, desc: "Caution! Storing in temp downloads risks file deletion during automated software sweeps." },
+                { text: "🔌 Save them only on your classmate's tablet since they have more free space.", correct: false, desc: "Incorrect. Storing your academic files on someone else's device leads to file loss." }
+            ]
+        }
+    ];
+
+    function registerName() {
+        const input = document.getElementById('studentNameInput');
+        if (input.value.trim() === '') {
+            // Using in-game text layout instead of raw alert
+            input.placeholder = "Full Name Required!";
+            input.classList.add('border-rose-300', 'bg-rose-50');
+            return;
+        }
+        studentName = input.value.trim();
+        document.getElementById('hudStudentName').textContent = studentName;
+        document.getElementById('certStudentName').textContent = studentName;
+
+        initAudio();
+        Tone.start();
+        playSfx('correct');
+
+        document.getElementById('nameScreen').classList.add('hidden');
+        document.getElementById('introScreen').classList.remove('hidden');
+    }
+
+    function selectPlayerCharacter(char) {
+        playerCharacter = char;
+        document.getElementById('selSakura').classList.add('opacity-0');
+        document.getElementById('selKenji').classList.add('opacity-0');
+
+        if (char === 'Sakura') {
+            document.getElementById('selSakura').classList.remove('opacity-0');
+        } else {
+            document.getElementById('selKenji').classList.remove('opacity-0');
+        }
+        playSfx('correct');
+    }
+
+    function startGame() {
+        score = 0;
+        currentScenarioIndex = 0;
+        stars = 3;
+
+        document.getElementById('introScreen').classList.add('opacity-0');
+        setTimeout(() => {
+            document.getElementById('introScreen').classList.add('hidden');
+            document.getElementById('gameOverScreen').classList.add('hidden');
+            document.getElementById('gamePlayArea').classList.remove('hidden');
+            document.getElementById('gameHud').classList.remove('opacity-0', '-translate-y-20');
+            
+            buildTrackerUI();
+            loadScenario(currentScenarioIndex);
+        }, 500);
+    }
+
+    function buildTrackerUI() {
+        const tracker = document.getElementById('stepTracker');
+        tracker.innerHTML = '';
+        for (let i = 0; i < scenarios.length; i++) {
+            const dot = document.createElement('div');
+            dot.id = `track-${i}`;
+            dot.className = "w-3 h-3 rounded-full bg-slate-200 border border-slate-300 transition-all text-[8px] font-bold text-white flex items-center justify-center";
+            tracker.appendChild(dot);
+        }
+    }
+
+    function updateTrackerUI() {
+        for (let i = 0; i < scenarios.length; i++) {
+            const dot = document.getElementById(`track-${i}`);
+            if (dot) {
+                if (i < currentScenarioIndex) {
+                    dot.className = "w-3 h-3 rounded-full bg-emerald-500 border border-emerald-600 shadow-sm flex items-center justify-center";
+                } else if (i === currentScenarioIndex) {
+                    dot.className = "w-4 h-4 rounded-full bg-indigo-500 border border-indigo-600 shadow-md animate-pulse flex items-center justify-center";
+                } else {
+                    dot.className = "w-3 h-3 rounded-full bg-slate-200 border border-slate-300 flex items-center justify-center";
+                }
+            }
+        }
+    }
+
+    // Shuffles an array dynamically to avoid static correct answer coordinates (e.g. Option A is not always correct)
+    function shuffleArray(array) {
+        const arr = [...array];
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+
+    function loadScenario(idx) {
+        if (idx >= scenarios.length) {
+            triggerGameOver();
+            return;
+        }
+
+        const scene = scenarios[idx];
+        
+        document.getElementById('hudScore').textContent = padScore(score);
+        document.getElementById('hudLevelName').textContent = `Item ${idx + 1}/${scenarios.length}`;
+        updateStarsUI();
+        updateTrackerUI();
+
+        setupDialogue(scene);
+        renderInteraction(scene);
+    }
+
+    function setupDialogue(scene) {
+        const avatarContainer = document.getElementById('characterAvatar');
+        const nameContainer = document.getElementById('characterName');
+        const textContainer = document.getElementById('dialogueText');
+
+        nameContainer.textContent = scene.dialogueName;
+        textContainer.innerHTML = scene.dialogueText;
+
+        if (scene.dialogueName === 'Sakura') {
+            nameContainer.className = "text-[8px] font-extrabold text-pink-600 uppercase tracking-widest bg-pink-50 px-2 py-0.5 rounded-full border border-pink-100";
+            avatarContainer.className = "w-12 h-12 shrink-0 bg-pink-50 rounded-xl border border-pink-100 p-0.5 flex items-center justify-center";
+            avatarContainer.innerHTML = sakuraAvatarSvg();
+        } else if (scene.dialogueName === 'Kenji') {
+            nameContainer.className = "text-[8px] font-extrabold text-indigo-600 uppercase tracking-widest bg-indigo-50 px-2 py-0.5 rounded-full border border-indigo-100";
+            avatarContainer.className = "w-12 h-12 shrink-0 bg-indigo-50 rounded-xl border border-indigo-100 p-0.5 flex items-center justify-center";
+            avatarContainer.innerHTML = kenjiAvatarSvg();
+        } else {
+            nameContainer.className = "text-[8px] font-extrabold text-emerald-700 uppercase tracking-widest bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-100";
+            avatarContainer.className = "w-12 h-12 shrink-0 bg-emerald-50 rounded-xl border border-emerald-100 p-0.5 flex items-center justify-center bounce-gentle";
+            avatarContainer.innerHTML = robotAvatarSvg();
+        }
+    }
+
+    function sakuraAvatarSvg() {
+        return `<svg viewBox="0 0 100 100" class="w-full h-full"><circle cx="50" cy="50" r="45" fill="#ffd1dc"/><circle cx="50" cy="52" r="28" fill="#ffe5d9"/><ellipse cx="40" cy="50" rx="3" ry="5" fill="#4a3728"/><ellipse cx="60" cy="50" rx="3" ry="5" fill="#4a3728"/><circle cx="35" cy="55" r="3" fill="#ffb7b2" opacity="0.6"/><circle cx="65" cy="55" r="3" fill="#ffb7b2" opacity="0.6"/><path d="M 47 58 Q 50 61 53 58" stroke="#4a3728" stroke-width="2.5" fill="none"/></svg>`;
+    }
+
+    function kenjiAvatarSvg() {
+        return `<svg viewBox="0 0 100 100" class="w-full h-full"><circle cx="50" cy="50" r="45" fill="#c7ceea"/><circle cx="50" cy="55" r="26" fill="#ffd8be"/><ellipse cx="42" cy="52" rx="3" ry="5" fill="#293241"/><ellipse cx="58" cy="52" rx="3" ry="5" fill="#293241"/><path d="M 46 62 Q 50 66 54 62" stroke="#293241" stroke-width="2.5" fill="none"/></svg>`;
+    }
+
+    function robotAvatarSvg() {
+        return `<svg viewBox="0 0 100 100" class="w-full h-full"><rect x="30" y="20" width="40" height="30" rx="15" fill="#15803d"/><ellipse cx="40" cy="35" rx="5" ry="5" fill="#ffffff"/><ellipse cx="60" cy="35" rx="5" ry="5" fill="#ffffff"/><circle cx="40" cy="35" r="2" fill="#000"/><circle cx="60" cy="35" r="2" fill="#000"/><rect x="30" y="55" width="40" height="30" rx="5" fill="#15803d"/><text x="50" y="75" font-family="sans-serif" font-weight="bold" font-size="20" fill="#facc15" text-anchor="middle">Z</text></svg>`;
+    }
+
+    function renderInteraction(scene) {
+        const area = document.getElementById('challengeInteractionArea');
+        area.innerHTML = '';
+
+        const inst = document.createElement('div');
+        inst.className = "text-[9px] font-bold text-slate-500 mb-2 bg-slate-50 border border-slate-200/60 px-3 py-1 rounded-lg w-full text-center";
+        inst.textContent = scene.instructions;
+        area.appendChild(inst);
+
+        const container = document.createElement('div');
+        container.className = "flex flex-col gap-1.5 w-full max-w-md max-h-[140px] md:max-h-[200px] overflow-y-auto pr-1";
+
+        // Shuffle options so the correct answer moves around dynamically
+        const shuffledOptions = shuffleArray(scene.options);
+
+        shuffledOptions.forEach((opt, idx) => {
+            const letter = String.fromCharCode(65 + idx); // A, B, C
+            const btn = document.createElement('button');
+            btn.className = "text-left text-[10px] md:text-xs font-medium p-2.5 bg-white hover:bg-emerald-50 rounded-xl border border-slate-200 hover:border-emerald-300 transition-all shadow-xs flex items-center gap-2 active:scale-95 w-full";
+            btn.innerHTML = `
+                <div class="w-5 h-5 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-[9px] shrink-0 border border-emerald-200">
+                    ${letter}
+                </div>
+                <span class="text-slate-700 leading-snug">${opt.text}</span>
+            `;
+            btn.onclick = () => {
+                evaluateChoice(opt);
+            };
+            container.appendChild(btn);
+        });
+
+        area.appendChild(container);
+    }
+
+    function evaluateChoice(option) {
+        if (option.correct) {
+            score += 150;
+            playSfx('correct');
+            triggerFeedback(true, "Perfect Choice!", option.rule || "Good Conduct", option.desc, 150);
+        } else {
+            score = Math.max(0, score - 50);
+            stars = Math.max(1, stars - 1);
+            playSfx('incorrect');
+            triggerFeedback(false, "Let's Review!", "DLSZ Guidelines", option.desc, 0);
+        }
+    }
+
+    function triggerFeedback(isCorrect, title, rule, text, points) {
+        const overlay = document.getElementById('feedbackOverlay');
+        const card = document.getElementById('feedbackCard');
+        const mascot = document.getElementById('feedbackMascot');
+        const fTitle = document.getElementById('feedbackTitle');
+        const fBadge = document.getElementById('feedbackRuleBadge');
+        const fText = document.getElementById('feedbackText');
+        const btn = document.getElementById('feedbackActionBtn');
+
+        if (isCorrect) {
+            card.className = "w-[85%] max-w-sm bg-white rounded-2xl p-4 border-4 border-emerald-200 shadow-xl flex flex-col items-center text-center transform scale-100 transition-all duration-300";
+            mascot.className = "w-12 h-12 mb-1 bg-emerald-50 flex items-center justify-center rounded-xl";
+            mascot.innerHTML = `<svg viewBox="0 0 100 100" class="w-8 h-8"><circle cx="50" cy="50" r="45" fill="#4ade80"/><path d="M 35 50 L 45 60 L 70 35" fill="none" stroke="#14532d" stroke-width="8" stroke-linecap="round"/></svg>`;
+            fTitle.className = "text-xs md:text-sm font-black text-emerald-800";
+            fTitle.textContent = title;
+            fBadge.className = "bg-emerald-50 text-emerald-700 text-[8px] px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider mb-1 border border-emerald-100";
+            fBadge.textContent = rule;
+            btn.className = "w-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-[11px] md:text-xs font-extrabold py-2 rounded-xl shadow active:scale-95";
+            btn.textContent = `Continue (+${points} PTS)`;
+        } else {
+            card.className = "w-[85%] max-w-sm bg-white rounded-2xl p-4 border-4 border-rose-200 shadow-xl flex flex-col items-center text-center transform scale-100 transition-all duration-300";
+            mascot.className = "w-12 h-12 mb-1 bg-rose-50 flex items-center justify-center rounded-xl";
+            mascot.innerHTML = `<svg viewBox="0 0 100 100" class="w-8 h-8"><circle cx="50" cy="50" r="45" fill="#fca5a5"/><line x1="33" y1="33" x2="67" y2="67" stroke="#991b1b" stroke-width="8" stroke-linecap="round"/><line x1="67" y1="33" x2="33" y2="67" stroke="#991b1b" stroke-width="8" stroke-linecap="round"/></svg>`;
+            fTitle.className = "text-xs md:text-sm font-black text-rose-800";
+            fTitle.textContent = title;
+            fBadge.className = "bg-rose-50 text-rose-700 text-[8px] px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider mb-1 border border-rose-100";
+            fBadge.textContent = rule;
+            btn.className = "w-full bg-gradient-to-r from-rose-500 to-amber-600 text-white text-[11px] md:text-xs font-extrabold py-2 rounded-xl shadow active:scale-95";
+            btn.textContent = "Retry Checkpoint";
+        }
+
+        fText.innerHTML = text;
+        overlay.classList.remove('hidden');
+    }
+
+    function dismissFeedback() {
+        document.getElementById('feedbackOverlay').classList.add('hidden');
+        
+        if (stars <= 1) {
+            stars = 3;
+            loadScenario(currentScenarioIndex);
+        } else {
+            currentScenarioIndex++;
+            loadScenario(currentScenarioIndex);
+        }
+    }
+
+    function triggerGameOver() {
+        document.getElementById('gamePlayArea').classList.add('hidden');
+        document.getElementById('gameOverScreen').classList.remove('hidden');
+        
+        // Dynamic Certificate Populate
+        document.getElementById('certStudentName').textContent = studentName;
+        document.getElementById('certFinalScore').textContent = `${score} / ${scenarios.length * 150} PTS`;
+        
+        // Update to current date dynamically
+        const dateString = new Date().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+        document.getElementById('certCompletionDate').textContent = dateString;
+    }
+
+    function restartQuest() {
+        document.getElementById('gameOverScreen').classList.add('hidden');
+        document.getElementById('nameScreen').classList.remove('hidden');
+        // Reset inputs
+        const input = document.getElementById('studentNameInput');
+        input.value = '';
+        input.placeholder = "e.g. Winnie Y. Diola";
+        input.classList.remove('border-rose-300', 'bg-rose-50');
+    }
+
+    function updateStarsUI() {
+        const hud = document.getElementById('hudStars');
+        hud.innerHTML = '';
+        for (let i = 0; i < 3; i++) {
+            const star = document.createElement('i');
+            if (i < stars) {
+                star.className = "fas fa-star text-amber-400";
+            } else {
+                star.className = "far fa-star text-slate-200";
+            }
+            hud.appendChild(star);
+        }
+    }
+
+    function openHandbook() {
+        document.getElementById('handbookModal').classList.remove('hidden');
+    }
+
+    function closeHandbook() {
+        document.getElementById('handbookModal').classList.add('hidden');
+    }
+
+    function switchTab(tab) {
+        const tabPledgeBtn = document.getElementById('tabPledgeBtn');
+        const tabIthinkBtn = document.getElementById('tabIthinkBtn');
+        const tabPledge = document.getElementById('tabPledge');
+        const tabIthink = document.getElementById('tabIthink');
+
+        if (tab === 'pledge') {
+            tabPledgeBtn.className = "bg-emerald-100 text-emerald-700 border border-emerald-300 px-3 py-1.5 rounded-xl font-bold text-[9px] md:text-xs";
+            tabIthinkBtn.className = "bg-slate-100 text-slate-600 border border-transparent px-3 py-1.5 rounded-xl font-bold text-[9px] md:text-xs";
+            tabPledge.classList.remove('hidden');
+            tabIthink.classList.add('hidden');
+        } else {
+            tabIthinkBtn.className = "bg-emerald-100 text-emerald-700 border border-emerald-300 px-3 py-1.5 rounded-xl font-bold text-[9px] md:text-xs";
+            tabPledgeBtn.className = "bg-slate-100 text-slate-600 border border-transparent px-3 py-1.5 rounded-xl font-bold text-[9px] md:text-xs";
+            tabIthink.classList.remove('hidden');
+            tabPledge.classList.add('hidden');
+        }
+    }
+
+    function padScore(val) {
+        return String(val).padStart(4, '0');
+    }
+
+    // Auto load name selection screen on layout load and attach listener
+    window.onload = function() {
+        document.getElementById('nameScreen').classList.remove('hidden');
+        document.getElementById('registerNameBtn').addEventListener('click', registerName);
+        document.getElementById('studentNameInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                registerName();
+            }
+        });
+    };
+</script>
+</body>
+</html>
